@@ -12,21 +12,27 @@ document.addEventListener('DOMContentLoaded', function () {
         document.querySelector('#header h1').textContent = evolucao.toUpperCase();
         document.querySelector('h2').textContent = `Informações sobre ${evolucao}`;
 
-
         fetch(`https://pokeapi.co/api/v2/pokemon/${evolucao}`)
             .then(response => response.json())
             .then(data => {
-                const imageUrl = data.sprites.front_default;
+                const sprites = Object.values(data.sprites);
+                const imageUrls = sprites.filter(item => typeof item === 'string');
 
+                const section = document.querySelector('#evolucao');
                 const imgElement = document.createElement('img');
 
-                imgElement.src = imageUrl;
+                let currentIndex = 2;
+                imgElement.src = imageUrls[currentIndex];
                 imgElement.alt = evolucao;
 
                 imgElement.setAttribute('aria-label', evolucao);
                 imgElement.setAttribute('role', 'img');
 
-                const section = document.querySelector('#evolucao'); 
+                imgElement.addEventListener('click', function () {
+                    currentIndex = (currentIndex + 1) % imageUrls.length;
+                    imgElement.src = imageUrls[currentIndex];
+                });
+
                 section.appendChild(imgElement);
             })
 
